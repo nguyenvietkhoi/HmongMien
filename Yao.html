@@ -9,7 +9,7 @@
     xhr.onload = function (e) {
         var uInt8Array = new Uint8Array(this.response);
         condb = new SQL.Database(uInt8Array);
-        contents = condb.exec("SELECT * FROM yao where Mienh='gemh' ");
+        contents = condb.exec("SELECT * FROM yao where mien='gemh' ");
         // contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
         console.log(contents[0].values[0]);
         $("#waitscreen").css({ display: 'none' });
