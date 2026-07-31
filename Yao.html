@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="./Scripts/sql.js"></script>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', './Databases/laha.jpg', true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function (e) {
+        var uInt8Array = new Uint8Array(this.response);
+        condb = new SQL.Database(uInt8Array);
+        contents = condb.exec("SELECT * FROM laha where laha='maaz' ");
+        // contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
+        console.log(contents[0].values[0]);
+        $("#waitscreen").css({ display: 'none' });
+		loadTable();
+    };
+    xhr.send();
+	
+function loadTable() {
+  var html = "<thead><tr><th>ProtoKra</th><th>English</th><th>Việt</th><th>Nôm</th><th>Laha</th><th>Nong Lay</th><th>Nong Lay</th><th>Pi Tong</th><th>Tà Mít</th></tr></thead>";	
+  contents = condb.exec('SELECT * FROM laha');
+  if (contents.length != 0) {
+	html += "<tbody>";
+	contents[0].values.forEach(row => {
+            html += "<tr>";
+            for (var i = 0; i < 6; i++) {
+				var cell = (row[i] != null) ? row[i] : "";
+                html += `<td>${cell}</td>`;
+            }
+			if (row[7] != null)
+				html += `<td><button onclick="s('./Sounds/NongLay/${row[7]}')">🔊</button></td>`;
+			else
+				html += `<td></td>`;
+			if (row[6] != null)
+				html += `<td><button onclick="s('./Sounds/PiTong/${row[6]}')">🔊</button></td>`;
+			else
+				html += `<td></td>`;
+			if (row[8] != null)
+				html += `<td><button onclick="s('./Sounds/TaMit/${row[8]}')">🔊</button></td>`;
+			else
+				html += `<td></td>`;
+            html += "</tr>";
+        });
+		html += "</tbody>";
+	document.getElementById("lahaTable").innerHTML = html;
+  }
+}
+
+function s(url) {
+	new Audio(url).play();
+}
+</script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laha</title>
+<style>
+@font-face {
+font-family: Jigmo3;
+src: url('./fonts/Jigmo3.ttf') format('truetype');
+font-display: swap;
+}
+@font-face {
+font-family: SimSun;
+src: url('./fonts/simsun.ttc') format('truetype');
+font-display: swap;
+}
+@font-face {
+font-family: SimSun-ExtB;
+src: url('./fonts/simsunb.ttf') format('truetype');
+font-display: swap;
+}
+@font-face {
+font-family: SimSun-ExtG;
+src: url('./fonts/SimsunExtG.ttf') format('truetype');
+font-display: swap;
+}
+#waitscreen {
+    background: url('./Loading.gif');
+    background-position: center;
+    position: fixed;
+    width: 100%; height: 100%; left: 0; top: 0;
+    z-index:1001;
+}
+#lahaTable , td, th {
+  border: 1px solid;
+  padding: 2px;
+  font-size: 14px;
+  font-family: Calibri, "Verdana", "Cambria Tai Yo", "Tai Lanna", "Leelawadee UI", Tahoma, "Microsoft New Tai Lue", sans-serif, "Muong Lo Cursive", TaiViet, "Segoe Ahom Print", "Helvetica Neue", Helvetica, Arial, SimSun, SimSun-ExtB, SimSun-ExtG, Jigmo3, "Malgun Gothic", "BabelStone Han", Sawndip, "Nom Na Tong", 'Han-Nom Gothic Supplement';
+}
+#lahaTable {
+	border-collapse: collapse;
+}
+#lahaTable thead th{
+  color: #fff;
+  background: #131b56;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+</style>
+</head>
+<div id="waitscreen" style="z-index: 1031;"></div>
+<table id="lahaTable">
+</table>
